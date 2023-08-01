@@ -6,7 +6,7 @@ type ReloadProps = {
 
 const Reload: React.FC<ReloadProps> = ({ onClick }) => {
   return (
-    <div className="flex justify-center items-center">
+    <div>
       <button
         className="btn btn-circle btn-lg"
         title="Next Quote"

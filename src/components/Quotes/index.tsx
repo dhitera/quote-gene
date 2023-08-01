@@ -2,25 +2,29 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 
 import Reload from "../Reload";
+import Category from "../Category";
 
-const apiURL = `https://api.api-ninjas.com/v1/quotes?category=success`;
+const defaultCategory = "success";
 
 type QuoteData = {
   quote: string;
   author: string;
   category: string;
 };
-
 const Quote = () => {
   const [quoteData, setQuoteData] = useState<QuoteData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [categoryValue, setCategoryValue] = useState(defaultCategory);
 
   useEffect(() => {
     fetchQuote();
-  }, []);
+  }, [categoryValue]);
 
   const fetchQuote = async () => {
     try {
+      setIsLoading(true);
+      // API is from https://api-ninjas.com/api/quotes
+      const apiURL = `https://api.api-ninjas.com/v1/quotes?category=${categoryValue}`;
       const response = await axios.get(apiURL, {
         headers: {
           "X-Api-Key": import.meta.env.VITE_API_KEY,
@@ -28,9 +32,9 @@ const Quote = () => {
       });
 
       setQuoteData(response.data);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data", error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -51,7 +55,13 @@ const Quote = () => {
           ))
         )}
       </div>
-      <Reload onClick={fetchQuote} />
+      <div className="flex justify-center items-center space-x-6">
+        <Reload onClick={fetchQuote} />
+        <Category
+          onClick={(slug) => setCategoryValue(slug)}
+          categoryValue={categoryValue}
+        />
+      </div>
     </>
   );
 };
